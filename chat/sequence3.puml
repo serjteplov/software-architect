@@ -1,0 +1,17 @@
+@startuml
+actor UserA
+participant "FE App A" as FE_A
+participant "ws-manager" as WS
+participant "write-message-service" as WMS
+participant "MongoDB (messages)" as Mongo
+participant "Push Service" as Push
+
+UserA -> FE_A: Вводит сообщение
+FE_A -> WS: WebSocket: отправка сообщения
+WS -> WMS: gRPC/REST: сохранить сообщение
+WMS -> Mongo: persist message
+alt UserB offline
+    WS -> Push: Отправить push-уведомление UserB
+end
+WS -> FE_A: OK
+@enduml

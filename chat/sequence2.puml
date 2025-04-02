@@ -1,0 +1,21 @@
+@startuml
+actor UserB
+participant "FE App B" as FE_B
+participant "read-message-service" as RMS
+participant "Redis (cache)" as Redis
+participant "MongoDB (messages)" as Mongo
+
+UserB -> FE_B: Открывает диалог с UserA
+FE_B -> RMS: GET /messages?dialog=A_B
+RMS -> Redis: Чтение кеша сообщений
+alt Кеш найден
+    Redis --> RMS: Список сообщений
+else Кеш не найден
+    Redis --> RMS: Miss
+    RMS -> Mongo: Получить сообщения из БД
+    Mongo --> RMS: Список сообщений
+    RMS -> Redis: Обновить кеш
+end
+RMS --> FE_B: Отправка сообщений
+@enduml
+

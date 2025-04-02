@@ -1,0 +1,13 @@
+@startuml
+actor UserB
+participant "FE App B" as FE_B
+participant "ws-manager" as WS
+participant "write-message-service" as WMS
+participant "MongoDB (messages)" as Mongo
+
+UserB -> FE_B: Читает сообщение от UserA
+FE_B -> WS: WebSocket: mark as read
+WS -> WMS: обновить статус прочтения
+WMS -> Mongo: Обновить статус read
+WS -> "FE App A": WebSocket Push сообщение прочитано
+@enduml
